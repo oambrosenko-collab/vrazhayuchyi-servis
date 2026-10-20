@@ -305,6 +305,22 @@ export type Database = {
           out_watched_sec: number;
         }[];
       };
+      team_report: {
+        Args: never;
+        Returns: {
+          user_id: string;
+          full_name: string;
+          email: string;
+          role: Database["public"]["Enums"]["user_role"];
+          status: Database["public"]["Enums"]["user_status"];
+          joined_at: string;
+          removed_at: string | null;
+          last_seen_at: string | null;
+          lessons_done: number;
+          lessons_total: number;
+          percent: number;
+        }[];
+      };
       join_organization: {
         Args: { p_full_name: string; p_token: string };
         Returns: {

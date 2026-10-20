@@ -122,6 +122,7 @@ export async function releaseSeat(
   if (!row?.out_ok) return { error: message(row?.out_reason) };
 
   revalidatePath("/admin");
+  revalidatePath("/admin/team");
   return { ok: "Місце звільнено." };
 }
 
