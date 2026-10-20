@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Alert, Button, Card, Label, Screen } from "@/components/ui";
 import { requireActiveUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { buildOutline, formatDuration } from "@/lib/course";
 
 // Per-user and cookie-dependent: there is no static shell worth
 // prerendering, so render on request instead of streaming a placeholder.
@@ -16,13 +17,23 @@ export default async function LearnPage() {
   await connection();
 
   const user = await requireActiveUser();
-
   const supabase = await createClient();
-  const { data } = await supabase.rpc("org_overview");
-  const org = data?.[0];
+
+  const [{ data: overview }, { data: rows }] = await Promise.all([
+    supabase.rpc("org_overview"),
+    supabase.rpc("course_outline"),
+  ]);
+
+  const org = overview?.[0];
+  const outline = buildOutline(rows ?? []);
 
   const expired =
     org?.expires_at != null && new Date(org.expires_at) < new Date();
+  const percent =
+    outline.total > 0 ? Math.round((outline.done / outline.total) * 100) : 0;
+
+  // Finished everything? Send them back to the start rather than nowhere.
+  const target = outline.next ?? outline.lessons[0] ?? null;
 
   return (
     <Screen>
@@ -34,8 +45,8 @@ export default async function LearnPage() {
           </h1>
         </div>
         {(user.role === "org_admin" || user.role === "superadmin") && (
-          <Link href="/admin" className="tap shrink-0">
-            <Button variant="ghost">Кабінет</Button>
+          <Link href="/admin" className="shrink-0">
+            <Button variant="neutral">Кабінет</Button>
           </Link>
         )}
       </div>
@@ -43,22 +54,101 @@ export default async function LearnPage() {
       {expired && (
         <div className="mb-[var(--space-4)]">
           <Alert tone="danger">
-            Доступ закладу закінчився. Прогрес і сертифікати збережені —
-            звернись до управляючого, щоб продовжити.
+            Доступ закладу закінчився, тому уроки зараз недоступні. Прогрес і
+            сертифікати збережені — звернись до управляючого, щоб продовжити.
           </Alert>
         </div>
       )}
 
-      <Card>
-        <h2 className="mb-[var(--space-2)] text-[length:var(--text-h3)] font-[var(--weight-semibold)]">
-          Курс ще готується
-        </h2>
-        <p className="text-[var(--color-text-secondary)]">
-          Уроки з&apos;являться тут, щойно буде записаний перший модуль. Місце
-          за тобою вже закріплене — повертайся за посиланням, яке дав
-          управляючий.
-        </p>
-      </Card>
+      {!target ? (
+        <Card>
+          <h2 className="mb-[var(--space-2)] text-[length:var(--text-h3)] font-[var(--weight-semibold)]">
+            {expired ? "Уроки приховані" : "Курс ще готується"}
+          </h2>
+          <p className="text-[var(--color-text-secondary)]">
+            {expired
+              ? "Щойно доступ продовжать, усе повернеться на місце — з того уроку, де ти спинився."
+              : "Уроки з'являться тут, щойно буде записаний перший модуль. Місце за тобою вже закріплене."}
+          </p>
+        </Card>
+      ) : (
+        <>
+          {/* The one big action. Everything else on this screen is a list. */}
+          <Link
+            href={`/learn/${target.id}`}
+            className="tap mb-[var(--space-6)] flex min-h-[4rem] flex-col justify-center rounded-[var(--radius-lg)] bg-[var(--color-accent)] px-[var(--space-6)] py-[var(--space-4)] text-[var(--color-text-on-accent)]"
+          >
+            <span className="text-[length:var(--text-h2)] font-[var(--weight-bold)]">
+              {outline.done === 0
+                ? "Почати навчання"
+                : outline.next
+                  ? "Продовжити"
+                  : "Переглянути ще раз"}
+            </span>
+            <span className="text-[length:var(--text-sm)] opacity-80">
+              {target.title}
+            </span>
+          </Link>
+
+          <div className="mb-[var(--space-6)]">
+            <div className="mb-[var(--space-2)] flex items-baseline justify-between">
+              <Label>Прогрес</Label>
+              <span className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+                {outline.done} із {outline.total} уроків
+              </span>
+            </div>
+            <div className="h-[8px] w-full overflow-hidden rounded-[var(--radius-full)] bg-[var(--color-surface)]">
+              <div
+                className="h-full bg-[var(--color-success)] transition-[width] duration-[var(--duration-base)]"
+                style={{ width: `${percent}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-[var(--space-4)]">
+            {outline.modules.map((mod, i) => (
+              <Card key={mod.id}>
+                <Label>Модуль {i + 1}</Label>
+                <h2 className="mt-[var(--space-1)] mb-[var(--space-4)] text-[length:var(--text-h3)] font-[var(--weight-semibold)]">
+                  {mod.title}
+                </h2>
+
+                <ul className="flex flex-col">
+                  {mod.lessons.map((l) => (
+                    <li
+                      key={l.id}
+                      className="border-b border-[var(--color-border)] last:border-0"
+                    >
+                      <Link
+                        href={`/learn/${l.id}`}
+                        className="tap flex min-h-[var(--tap-min)] items-center gap-[var(--space-3)] py-[var(--space-3)]"
+                      >
+                        <span
+                          aria-hidden
+                          className={
+                            "flex h-6 w-6 shrink-0 items-center justify-center rounded-[var(--radius-full)] text-[length:var(--text-xs)] " +
+                            (l.completed
+                              ? "bg-[var(--color-success-soft)] text-[var(--color-success)]"
+                              : "border border-[var(--color-border-strong)] text-[var(--color-text-muted)]")
+                          }
+                        >
+                          {l.completed ? "✓" : ""}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate">
+                          {l.title}
+                        </span>
+                        <span className="shrink-0 font-[family-name:var(--font-mono)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+                          {formatDuration(l.durationSec)}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
 
       <form action="/auth/sign-out" method="post" className="mt-[var(--space-8)]">
         <Button variant="ghost" type="submit">

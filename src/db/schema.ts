@@ -1,7 +1,9 @@
 import {
+  boolean,
   check,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -102,5 +104,105 @@ export const users = pgTable(
   ],
 );
 
+/* ------------------------------------------------------------------ */
+/* Course content. No organization_id anywhere below: the platform      */
+/* teaches one thing, and everyone gets the same course.                */
+/* ------------------------------------------------------------------ */
+
+export const courses = pgTable("courses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description"),
+  isPublished: boolean("is_published").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export const modules = pgTable(
+  "modules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => courses.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    summary: text("summary"),
+    orderIndex: integer("order_index").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("modules_by_course").on(t.courseId, t.orderIndex)],
+);
+
+export const lessons = pgTable(
+  "lessons",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    moduleId: uuid("module_id")
+      .notNull()
+      .references(() => modules.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description"),
+    /** Null until the video is uploaded; the lesson still renders. */
+    bunnyVideoId: text("bunny_video_id"),
+    durationSec: integer("duration_sec").notNull(),
+    /** [{ title, url }] — downloadable handouts. */
+    materials: jsonb("materials").notNull().default(sql`'[]'::jsonb`),
+    orderIndex: integer("order_index").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [index("lessons_by_module").on(t.moduleId, t.orderIndex)],
+);
+
+/**
+ * Two numbers, not one. `positionSec` is where to drop the needle on
+ * return; `watchedSec` accumulates real playback, so dragging the scrubber
+ * to the end does not count. The owner's report rests on that difference.
+ */
+export const lessonProgress = pgTable(
+  "lesson_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    lessonId: uuid("lesson_id")
+      .notNull()
+      .references(() => lessons.id, { onDelete: "cascade" }),
+    positionSec: integer("position_sec").notNull().default(0),
+    watchedSec: integer("watched_sec").notNull().default(0),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("lesson_progress_user_lesson").on(t.userId, t.lessonId),
+    index("lesson_progress_by_user").on(t.userId),
+    index("lesson_progress_by_lesson").on(t.lessonId),
+  ],
+);
+
 export type Organization = typeof organizations.$inferSelect;
 export type User = typeof users.$inferSelect;
+export type Course = typeof courses.$inferSelect;
+export type Module = typeof modules.$inferSelect;
+export type Lesson = typeof lessons.$inferSelect;
+export type LessonProgress = typeof lessonProgress.$inferSelect;
