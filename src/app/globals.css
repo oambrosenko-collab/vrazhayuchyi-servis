@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "./design-tokens.css";
+
+html,
+body {
+  background: var(--color-bg-deep);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 16px; /* below this iOS zooms inputs on focus */
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+}
+
+/* The waiter taps with a thumb, on the move. */
+button,
+[role="button"],
+a.tap,
+input,
+select {
+  min-height: var(--tap-min);
+}
+
+::placeholder { color: var(--color-text-muted); }
