@@ -429,6 +429,141 @@ export type Database = {
         Args: { p_user_id: string };
         Returns: { out_ok: boolean; out_reason: string }[];
       };
+      su_overview: {
+        Args: never;
+        Returns: {
+          organizations_total: number;
+          organizations_active: number;
+          seats_sold: number;
+          seats_taken: number;
+          learners_active: number;
+          learners_finished: number;
+          avg_percent: number;
+          certificates_issued: number;
+          lessons_total: number;
+          quizzes_total: number;
+        }[];
+      };
+      su_organizations: {
+        Args: never;
+        Returns: {
+          id: string;
+          name: string;
+          admin_email: string | null;
+          package_size: number;
+          seats_taken: number;
+          activation: number;
+          avg_percent: number;
+          cumulative_users: number;
+          status: Database["public"]["Enums"]["org_status"];
+          expires_at: string | null;
+          days_left: number | null;
+          created_at: string;
+        }[];
+      };
+      su_course_tree: {
+        Args: never;
+        Returns: {
+          course_id: string;
+          course_title: string;
+          course_slug: string;
+          is_published: boolean;
+          module_id: string | null;
+          module_title: string | null;
+          module_summary: string | null;
+          module_order: number | null;
+          lesson_id: string | null;
+          lesson_title: string | null;
+          lesson_desc: string | null;
+          lesson_order: number | null;
+          duration_sec: number | null;
+          bunny_video_id: string | null;
+        }[];
+      };
+      su_quiz_tree: {
+        Args: never;
+        Returns: {
+          quiz_id: string;
+          quiz_title: string;
+          module_id: string | null;
+          module_title: string | null;
+          pass_score: number;
+          is_final: boolean;
+          question_id: string | null;
+          prompt: string | null;
+          topic: string | null;
+          question_order: number | null;
+          option_id: string | null;
+          label: string | null;
+          is_correct: boolean | null;
+          option_order: number | null;
+        }[];
+      };
+      su_extend_access: {
+        Args: { p_org: string; p_months: number };
+        Returns: { out_ok: boolean; out_expires_at: string | null }[];
+      };
+      su_add_seats: {
+        Args: { p_org: string; p_delta: number };
+        Returns: { out_ok: boolean; out_package_size: number }[];
+      };
+      su_set_org_status: {
+        Args: {
+          p_org: string;
+          p_status: Database["public"]["Enums"]["org_status"];
+        };
+        Returns: { out_ok: boolean }[];
+      };
+      su_set_course_published: {
+        Args: { p_course: string; p_published: boolean };
+        Returns: { out_ok: boolean }[];
+      };
+      su_save_module: {
+        Args: {
+          p_id: string | null;
+          p_course: string;
+          p_title: string;
+          p_summary: string | null;
+        };
+        Returns: { out_ok: boolean; out_id: string | null }[];
+      };
+      su_save_lesson: {
+        Args: {
+          p_id: string | null;
+          p_module: string;
+          p_title: string;
+          p_description: string | null;
+          p_duration_sec: number;
+          p_bunny_video_id: string | null;
+        };
+        Returns: { out_ok: boolean; out_id: string | null }[];
+      };
+      su_move_lesson: {
+        Args: { p_id: string; p_direction: number };
+        Returns: { out_ok: boolean }[];
+      };
+      su_delete_lesson: {
+        Args: { p_id: string };
+        Returns: { out_ok: boolean; out_reason: string }[];
+      };
+      su_save_question: {
+        Args: {
+          p_id: string | null;
+          p_quiz: string;
+          p_prompt: string;
+          p_topic: string;
+          p_options: Json;
+        };
+        Returns: { out_ok: boolean; out_id: string | null }[];
+      };
+      su_delete_question: {
+        Args: { p_id: string };
+        Returns: { out_ok: boolean }[];
+      };
+      su_set_pass_score: {
+        Args: { p_quiz: string; p_score: number };
+        Returns: { out_ok: boolean }[];
+      };
       su_provision_organization: {
         Args: {
           p_admin_email: string;

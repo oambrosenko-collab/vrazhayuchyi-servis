@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/lib/supabase/types";
 
@@ -48,6 +48,15 @@ export async function requireActiveUser(): Promise<AppUser> {
   if (row.status === "removed") redirect("/access-revoked");
 
   return row;
+}
+
+/** The platform owner. Nobody else gets past this. */
+export async function requireSuperadmin(): Promise<AppUser> {
+  const user = await requireActiveUser();
+  // Not a 403 page: someone who is not the owner has no business
+  // learning that /su exists.
+  if (user.role !== "superadmin") notFound();
+  return user;
 }
 
 export async function requireOrgAdmin(): Promise<AppUser> {
