@@ -123,3 +123,75 @@ begin
     end loop;
   end loop;
 end $$;
+
+-- ------------------------------------------------------------
+-- 4. Quizzes
+--
+-- Four questions per module and five in the final, each with one correct
+-- option and two plausible wrong ones. The correct option is always
+-- order_index 0 here purely because the seed is written that way — the
+-- sheet RPC shuffles questions and never reveals which option is right,
+-- so nothing in the app depends on that ordering.
+-- ------------------------------------------------------------
+do $$
+declare
+  cid uuid; qid uuid; qq uuid; m record; i int; item jsonb;
+  -- [prompt, topic, correct, wrong, wrong]
+  bank jsonb := '{
+    "0": [
+      ["Скільки секунд вирішують перше враження гостя?","Перша хвилина","Близько семи","Близько тридцяти","Хвилина і більше"],
+      ["Коли подавати меню?","Посадка","Після того, як гість сів і роздягнувся","Одразу на вході","Коли гість попросить"],
+      ["Що робити, якщо всі столи зайняті?","Зустріч","Назвати час очікування й запропонувати бар","Сказати, що місць немає","Мовчки чекати"],
+      ["Навіщо приносити воду без запиту?","Перший контакт","Це знімає паузу й показує увагу","Щоб збільшити чек","Так прийнято скрізь"]
+    ],
+    "1": [
+      ["Як правильно рекомендувати страву?","Рекомендації","Назвати конкретну й пояснити чому","Запитати «що будете?»","Порадити найдорожче"],
+      ["Що обовʼязково уточнити перед відправкою замовлення?","Уточнення","Алергії та непереносимість","Спосіб оплати","Чи є знижка"],
+      ["Коли виносити гарячу страву?","Темп подачі","Коли гість доїв попередню","Одразу як готово","Разом з усім замовленням"],
+      ["Гість вагається між двома стравами. Що робити?","Рекомендації","Коротко порівняти й порадити одну","Сказати «обидві смачні»","Залишити думати"]
+    ],
+    "2": [
+      ["Перша реакція на скаргу гостя?","Скарга","Вислухати й подякувати, що сказав","Пояснити, що він не правий","Одразу кликати управляючого"],
+      ["Кухня помилилася зі стравою. Що сказати?","Помилка кухні","Визнати помилку й назвати час виправлення","Сказати, що так і має бути","Промовчати й замінити тихо"],
+      ["Гість підвищує голос. Що робити?","Конфлікт","Знизити власний тон і відвести розмову вбік","Відповісти так само","Піти й не повертатись"],
+      ["Що не можна казати гостю ніколи?","Скарга","«Це не моя зона відповідальності»","«Зараз розберусь»","«Дякую, що сказали»"]
+    ]
+  }'::jsonb;
+  finals jsonb := '[
+    ["Що робить сервіс передбачуваним?","Стандарт","Однаковий стандарт у всіх, хто говорить із гостем","Досвід окремого офіціанта","Розмір чайових"],
+    ["Коли гість уперше оцінює заклад?","Перша хвилина","У перші секунди після входу","Коли приносять рахунок","Після першої страви"],
+    ["Найкраща реакція на помилку закладу?","Помилка кухні","Визнати, вибачитись і дати конкретне рішення","Знижка без пояснень","Аргументувати, чому так сталось"],
+    ["Що важливіше за швидкість подачі?","Темп подачі","Відповідність темпу гостя","Кількість страв за раз","Порядок у чеку"],
+    ["Навіщо уточнювати алергії?","Уточнення","Це питання безпеки гостя","Щоб збільшити чек","Так швидше оформити замовлення"]
+  ]'::jsonb;
+begin
+  select c.id into cid from courses c where c.is_published limit 1;
+
+  for m in (select mo.id, mo.order_index, mo.title from modules mo
+            where mo.course_id = cid order by mo.order_index) loop
+    insert into quizzes (course_id, module_id, title, pass_score, is_final)
+    values (cid, m.id, 'Тест: ' || m.title, 80, false)
+    returning id into qid;
+
+    i := 0;
+    for item in select * from jsonb_array_elements(bank -> m.order_index::text) loop
+      insert into quiz_questions (quiz_id, prompt, topic, order_index)
+      values (qid, item->>0, item->>1, i) returning id into qq;
+      insert into quiz_options (question_id, label, is_correct, order_index)
+      values (qq, item->>2, true, 0), (qq, item->>3, false, 1), (qq, item->>4, false, 2);
+      i := i + 1;
+    end loop;
+  end loop;
+
+  insert into quizzes (course_id, module_id, title, pass_score, is_final)
+  values (cid, null, 'Фінальний тест', 80, true) returning id into qid;
+
+  i := 0;
+  for item in select * from jsonb_array_elements(finals) loop
+    insert into quiz_questions (quiz_id, prompt, topic, order_index)
+    values (qid, item->>0, item->>1, i) returning id into qq;
+    insert into quiz_options (question_id, label, is_correct, order_index)
+    values (qq, item->>2, true, 0), (qq, item->>3, false, 1), (qq, item->>4, false, 2);
+    i := i + 1;
+  end loop;
+end $$;

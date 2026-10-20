@@ -305,6 +305,68 @@ export type Database = {
           out_watched_sec: number;
         }[];
       };
+      course_quizzes: {
+        Args: never;
+        Returns: {
+          quiz_id: string;
+          module_id: string | null;
+          title: string;
+          pass_score: number;
+          is_final: boolean;
+          question_count: number;
+          best_score: number;
+          passed: boolean;
+          attempts: number;
+        }[];
+      };
+      quiz_sheet: {
+        Args: { p_quiz_id: string };
+        Returns: {
+          quiz_title: string;
+          pass_score: number;
+          question_id: string;
+          prompt: string;
+          question_order: number;
+          option_id: string;
+          label: string;
+          option_order: number;
+        }[];
+      };
+      submit_quiz_attempt: {
+        Args: { p_quiz_id: string; p_answers: Json };
+        Returns: {
+          out_ok: boolean;
+          out_reason: string;
+          out_score: number;
+          out_passed: boolean;
+          out_correct: number;
+          out_total: number;
+          out_weak_topics: string[] | null;
+        }[];
+      };
+      certificate_status: {
+        Args: never;
+        Returns: {
+          lessons_done: number;
+          lessons_total: number;
+          quizzes_passed: number;
+          quizzes_total: number;
+          eligible: boolean;
+          number: string | null;
+          issued_at: string | null;
+          full_name: string | null;
+          org_name: string | null;
+          course_title: string;
+        }[];
+      };
+      issue_certificate: {
+        Args: never;
+        Returns: {
+          out_ok: boolean;
+          out_reason: string;
+          out_number: string | null;
+        }[];
+      };
       team_report: {
         Args: never;
         Returns: {
