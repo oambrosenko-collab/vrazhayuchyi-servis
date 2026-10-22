@@ -195,3 +195,37 @@ begin
     i := i + 1;
   end loop;
 end $$;
+
+-- ------------------------------------------------------------
+-- 4. Webinars — the monthly rhythm the annual price rests on.
+--
+-- Three states the screens have to handle: a past broadcast with its
+-- recording, a past one whose recording is not up yet, and the next date
+-- in the schedule. Links point at the reserved .test TLD, which never
+-- resolves — nothing here pretends to be a real room.
+--
+-- Unlike the course, webinars carry no organization_id: publishing one
+-- shows it to every venue with live access. That is the product working
+-- as designed, and also the reason to clear these before a real customer:
+--   delete from webinars where title like '[demo]%';
+-- ------------------------------------------------------------
+insert into webinars (title, description, starts_at, duration_min,
+                      join_url, recording_url, is_published)
+values
+  ('[demo] Як прочитати стіл за перші тридцять секунд',
+   'Побачення, ділова зустріч і родина з дитиною потребують різного темпу подачі. Розбираємо на записах із залу.',
+   date_trunc('hour', now()) - interval '23 days', 60,
+   'https://zoom.test/j/read-the-table', 'https://zoom.test/rec/read-the-table', true),
+
+  ('[demo] Рекомендація, яка звучить послугою',
+   'Одна точна фраза замість «візьміть ще десерт». Як це впливає на чек і на враження.',
+   date_trunc('hour', now()) - interval '4 days', 60,
+   'https://zoom.test/j/recommendation', null, true),
+
+  ('[demo] Коли страва затрималась',
+   'Гість прощає чекання, якщо почув про нього від офіціанта раніше, ніж помітив сам.',
+   -- 19:00 Kyiv, not 19:00 UTC: the session zone here is UTC, and a
+   -- broadcast is announced in the time the waiter actually reads.
+   (date_trunc('day', now() at time zone 'Europe/Kyiv')
+     + interval '12 days' + interval '19 hours') at time zone 'Europe/Kyiv', 60,
+   'https://zoom.test/j/late-dish', null, true);

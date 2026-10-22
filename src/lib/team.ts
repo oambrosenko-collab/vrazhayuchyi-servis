@@ -1,4 +1,5 @@
 import type { FunctionReturns } from "@/lib/supabase/types";
+import { formatTouched } from "@/lib/webinars";
 
 export type TeamRow = FunctionReturns<"team_report">;
 
@@ -14,6 +15,15 @@ export type TeamSummary = {
   averagePercent: number;
   /** Active people who finished the whole course. */
   finished: number;
+  /**
+   * Active seats bucketed by how far they got. The average hides the
+   * shape — half a team at 100% and half at zero averages to the same
+   * number as everyone sitting at fifty.
+   */
+  bins: { label: string; count: number }[];
+  /** Webinar touches against webinars held, summed over active seats. */
+  webinarsTouched: number;
+  webinarsHeld: number;
 };
 
 export function summarise(rows: TeamRow[]): TeamSummary {
@@ -43,6 +53,26 @@ export function summarise(rows: TeamRow[]): TeamSummary {
     finished: active.filter(
       (r) => r.lessons_total > 0 && r.lessons_done >= r.lessons_total,
     ).length,
+    bins: [
+      {
+        label: "Не починали",
+        count: active.filter((r) => r.percent === 0).length,
+      },
+      {
+        label: "До половини",
+        count: active.filter((r) => r.percent > 0 && r.percent < 50).length,
+      },
+      {
+        label: "Більше половини",
+        count: active.filter((r) => r.percent >= 50 && r.percent < 100).length,
+      },
+      {
+        label: "Завершили",
+        count: active.filter((r) => r.percent >= 100).length,
+      },
+    ],
+    webinarsTouched: active.reduce((n, r) => n + r.webinars_touched, 0),
+    webinarsHeld: active.reduce((n, r) => n + r.webinars_held, 0),
   };
 }
 
@@ -81,6 +111,7 @@ export function toCsv(rows: TeamRow[]): string {
     "Пройдено уроків",
     "Усього уроків",
     "Відсоток",
+    "Вебінари за 3 місяці",
     "Остання активність",
     "Звільнено",
   ];
@@ -99,6 +130,7 @@ export function toCsv(rows: TeamRow[]): string {
       r.lessons_done,
       r.lessons_total,
       `${r.percent}%`,
+      formatTouched(r.webinars_touched, r.webinars_held),
       r.last_seen_at ? formatDate(r.last_seen_at) : "не починав",
       formatDate(r.removed_at),
     ]

@@ -64,8 +64,11 @@ export function RoleNav({
                 key={a.key}
                 href={a.href}
                 aria-current={active ? "page" : undefined}
+                // Wider than the label needs: at tight padding a
+                // full-radius pill on one short word reads as a lozenge.
+                // The extra breathing room squares it off into a tab.
                 className={
-                  "tap flex min-h-[var(--tap-min)] shrink-0 items-center whitespace-nowrap rounded-[var(--radius-full)] px-[var(--space-3)] text-[length:var(--text-sm)] " +
+                  "tap flex min-h-[var(--tap-min)] shrink-0 items-center whitespace-nowrap rounded-[var(--radius-full)] px-[var(--space-6)] text-[length:var(--text-sm)] " +
                   (active
                     ? "bg-[var(--color-surface-raised)] font-[var(--weight-semibold)] text-[var(--color-text)]"
                     : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface)] hover:text-[var(--color-text)]")

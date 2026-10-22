@@ -10,6 +10,7 @@ const TABS = [
   { href: "/su/orgs", label: "Заклади" },
   { href: "/su/course", label: "Курс" },
   { href: "/su/quizzes", label: "Тести" },
+  { href: "/su/webinars", label: "Вебінари" },
 ] as const;
 
 /**

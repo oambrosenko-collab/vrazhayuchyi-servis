@@ -1,29 +1,54 @@
-import Link from "next/link";
-import { Card, Label, Screen } from "@/components/ui";
+import type { Metadata } from "next";
+import { SiteHeader } from "@/components/landing/site-header";
+import { Hero } from "@/components/landing/hero";
+import { Problem } from "@/components/landing/problem";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { YearValue } from "@/components/landing/year-value";
+import { Techniques } from "@/components/landing/techniques";
+import { SeatReuse } from "@/components/landing/seat-reuse";
+import { ProductShots } from "@/components/landing/product-shots";
+import { Pricing } from "@/components/landing/pricing";
+import { Faq } from "@/components/landing/faq";
+import { RequestForm } from "@/components/landing/request-form";
+import { SiteFooter } from "@/components/landing/site-footer";
 
+export const metadata: Metadata = {
+  title: "Вражаючий сервіс — навчання персоналу для ресторанів",
+  description:
+    "Гість рідко скаржиться — він просто не повертається. Ввідний курс сервісу, щомісячні розбори для команди й звіт, у якому рівень залу видно поіменно. Пакети на 10–50 місць, доступ на 12 місяців.",
+};
+
+/**
+ * Section order follows the PRD page map.
+ *
+ * Two substitutions. Venue logos, a manager's quote and a lesson fragment
+ * gave way to `ProductShots` — nothing to quote, nobody to show, and the
+ * course is not filmed. And the annual price is argued before the price is
+ * shown: `YearValue` answers "навіщо рік, якщо курс на три дні",
+ * `Techniques` says what the year actually teaches.
+ *
+ * There was an "early stage" block here too, stating plainly that there
+ * are no customers yet and the content is still ahead. Removed on
+ * request. What still carries that honesty is the `ProductShots` lead,
+ * which says why there are no client logos on the page.
+ */
 export default function Home() {
   return (
-    <Screen>
-      <Label>Вражаючий сервіс</Label>
-      <h1 className="mt-[var(--space-2)] mb-[var(--space-4)] text-[length:var(--text-display)] font-[var(--weight-bold)]">
-        Навчання персоналу, яке переживає плинність
-      </h1>
-      <p className="mb-[var(--space-8)] text-[var(--color-text-secondary)]">
-        Лендінг ще попереду. Зараз працює фундамент: вхід, заклади й
-        посилання-інвайт.
-      </p>
-
-      <Card>
-        <p className="mb-[var(--space-4)] text-[var(--color-text-secondary)]">
-          Є посилання від управляючого — відкрий його. Уже вчишся тут:
-        </p>
-        <Link
-          href="/login"
-          className="tap inline-flex items-center rounded-[var(--radius-md)] bg-[var(--color-accent)] px-[var(--space-6)] py-[var(--space-3)] font-[var(--weight-semibold)] text-[var(--color-text-on-accent)]"
-        >
-          Увійти
-        </Link>
-      </Card>
-    </Screen>
+    <>
+      <SiteHeader />
+      <main className="grow">
+        <Hero />
+        <Problem />
+        <HowItWorks />
+        <YearValue />
+        <Techniques />
+        <SeatReuse />
+        <ProductShots />
+        <Pricing />
+        <Faq />
+        <RequestForm />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

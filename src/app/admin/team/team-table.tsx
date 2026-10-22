@@ -10,6 +10,7 @@ import {
   toCsv,
   type TeamRow,
 } from "@/lib/team";
+import { formatTouched, TOUCH_MEANING } from "@/lib/webinars";
 
 function ProgressCell({ row }: { row: TeamRow }) {
   const muted = row.status === "removed";
@@ -123,7 +124,7 @@ export function TeamTable({
         </p>
       ) : (
         <div className="-mx-[var(--space-6)] overflow-x-auto px-[var(--space-6)]">
-          <table className="w-full min-w-[46rem] border-collapse text-left">
+          <table className="w-full min-w-[52rem] border-collapse text-left">
             <thead>
               <tr className="border-b border-[var(--color-border)]">
                 {[
@@ -131,6 +132,7 @@ export function TeamTable({
                   "Пошта",
                   "Приєднався",
                   "Пройдено",
+                  "Вебінари",
                   tab === "active" ? "Остання активність" : "Звільнено",
                   "",
                 ].map((h, i) => (
@@ -176,6 +178,16 @@ export function TeamTable({
                     </td>
                     <td className="py-[var(--space-3)] pr-[var(--space-4)]">
                       <ProgressCell row={r} />
+                    </td>
+                    <td
+                      className={
+                        "py-[var(--space-3)] pr-[var(--space-4)] font-[family-name:var(--font-mono)] text-[length:var(--text-sm)] " +
+                        (r.status === "removed"
+                          ? "text-[var(--color-text-muted)]"
+                          : "text-[var(--color-text-secondary)]")
+                      }
+                    >
+                      {formatTouched(r.webinars_touched, r.webinars_held)}
                     </td>
                     <td
                       className={
@@ -239,6 +251,17 @@ export function TeamTable({
           Перемотати в кінець не вийде — рахується тільки реально
           прослуханий час.
         </p>
+
+        <div className="mt-[var(--space-4)]">
+          <Label>Як читати «вебінари»</Label>
+          <p className="mt-[var(--space-2)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+            Скільки ефірів за останні три місяці людина відкрила з кабінету,
+            проти того, скільки їх було за цей час після її приєднання.
+            Зараховується {TOUCH_MEANING}. Скільки саме вона додивилась,
+            платформа не знає: Zoom і зовнішній запис такого сигналу не
+            дають — тому колонка називає рівно те, що видно.
+          </p>
+        </div>
       </div>
     </Card>
   );

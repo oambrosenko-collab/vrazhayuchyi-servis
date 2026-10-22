@@ -2,6 +2,11 @@
 // Regenerate after every migration:
 //   npm run db:types
 //
+// The webinar tables, enum and functions below were written by hand: the
+// Supabase CLI is not installed on this machine, so the generator could
+// not be run after the webinars migration. Regenerate when it is, and
+// this note goes away with the diff.
+//
 // The generic helper types shipped by the generator are trimmed here to the
 // `public` schema, which is the only one the client ever touches.
 
@@ -271,6 +276,84 @@ export type Database = {
           },
         ];
       };
+      webinars: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          duration_min: number;
+          id: string;
+          is_published: boolean;
+          join_url: string | null;
+          recording_url: string | null;
+          starts_at: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          duration_min?: number;
+          id?: string;
+          is_published?: boolean;
+          join_url?: string | null;
+          recording_url?: string | null;
+          starts_at: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          duration_min?: number;
+          id?: string;
+          is_published?: boolean;
+          join_url?: string | null;
+          recording_url?: string | null;
+          starts_at?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      webinar_touches: {
+        Row: {
+          created_at: string;
+          id: string;
+          source: Database["public"]["Enums"]["webinar_touch"];
+          user_id: string;
+          webinar_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          source: Database["public"]["Enums"]["webinar_touch"];
+          user_id: string;
+          webinar_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          source?: Database["public"]["Enums"]["webinar_touch"];
+          user_id?: string;
+          webinar_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "webinar_touches_webinar_id_fkey";
+            columns: ["webinar_id"];
+            isOneToOne: false;
+            referencedRelation: "webinars";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "webinar_touches_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<never, never>;
     Functions: {
@@ -367,6 +450,75 @@ export type Database = {
           out_number: string | null;
         }[];
       };
+      webinar_feed: {
+        Args: never;
+        Returns: {
+          webinar_id: string;
+          title: string;
+          description: string | null;
+          starts_at: string;
+          duration_min: number;
+          join_url: string | null;
+          recording_url: string | null;
+          is_upcoming: boolean;
+          joined_live: boolean;
+          opened_recording: boolean;
+        }[];
+      };
+      next_webinar: {
+        Args: never;
+        Returns: {
+          webinar_id: string;
+          title: string;
+          description: string | null;
+          starts_at: string;
+          duration_min: number;
+          join_url: string | null;
+          recording_url: string | null;
+          is_upcoming: boolean;
+          joined_live: boolean;
+          opened_recording: boolean;
+        }[];
+      };
+      record_webinar_touch: {
+        Args: {
+          p_webinar: string;
+          p_source: Database["public"]["Enums"]["webinar_touch"];
+        };
+        Returns: { out_ok: boolean; out_reason: string }[];
+      };
+      su_webinars: {
+        Args: never;
+        Returns: {
+          webinar_id: string;
+          title: string;
+          description: string | null;
+          starts_at: string;
+          duration_min: number;
+          join_url: string | null;
+          recording_url: string | null;
+          is_published: boolean;
+          touched_live: number;
+          touched_recording: number;
+        }[];
+      };
+      su_save_webinar: {
+        Args: {
+          p_id: string | null;
+          p_title: string;
+          p_description: string | null;
+          p_starts_at: string;
+          p_duration_min: number;
+          p_join_url: string | null;
+          p_recording_url: string | null;
+          p_published: boolean;
+        };
+        Returns: { out_ok: boolean; out_id: string | null }[];
+      };
+      su_delete_webinar: {
+        Args: { p_id: string };
+        Returns: { out_ok: boolean }[];
+      };
       team_report: {
         Args: never;
         Returns: {
@@ -381,6 +533,8 @@ export type Database = {
           lessons_done: number;
           lessons_total: number;
           percent: number;
+          webinars_touched: number;
+          webinars_held: number;
         }[];
       };
       join_organization: {
@@ -583,6 +737,7 @@ export type Database = {
       org_status: "trial" | "active" | "expired" | "suspended";
       user_role: "employee" | "org_admin" | "superadmin";
       user_status: "active" | "removed";
+      webinar_touch: "live" | "recording";
     };
     CompositeTypes: Record<never, never>;
   };

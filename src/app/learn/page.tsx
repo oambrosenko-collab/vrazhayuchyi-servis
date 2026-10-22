@@ -4,6 +4,7 @@ import { Alert, Card, Label, Screen } from "@/components/ui";
 import { requireActiveUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buildOutline, formatDuration } from "@/lib/course";
+import { formatWhen } from "@/lib/webinars";
 import { RoleNav } from "@/components/role-nav";
 
 // Per-user and cookie-dependent: there is no static shell worth
@@ -100,17 +101,20 @@ export default async function LearnPage() {
     { data: rows },
     { data: quizRows },
     { data: certRows },
+    { data: webinarRows },
   ] = await Promise.all([
     supabase.rpc("org_overview"),
     supabase.rpc("course_outline"),
     supabase.rpc("course_quizzes"),
     supabase.rpc("certificate_status"),
+    supabase.rpc("next_webinar"),
   ]);
 
   const org = overview?.[0];
   const outline = buildOutline(rows ?? []);
   const quizzes = quizRows ?? [];
   const cert = certRows?.[0];
+  const webinar = webinarRows?.[0];
 
   const quizByModule = new Map(
     quizzes
@@ -191,6 +195,26 @@ export default async function LearnPage() {
               />
             </div>
           </div>
+
+          {/* Placed above the module list rather than last, as the PRD's
+              contents imply: it is the only item on this screen with a
+              deadline. A module waits; tonight's broadcast does not. */}
+          <Link
+            href="/learn/webinars"
+            className="tap mb-[var(--space-6)] flex min-h-[var(--tap-min)] items-center justify-between gap-[var(--space-4)] rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-[var(--space-4)] py-[var(--space-3)]"
+          >
+            <span className="min-w-0">
+              <span className="block text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-text-secondary)]">
+                {webinar ? "Найближчий вебінар" : "Вебінари"}
+              </span>
+              <span className="mt-[var(--space-1)] block truncate font-[var(--weight-semibold)]">
+                {webinar ? webinar.title : "Розклад і записи"}
+              </span>
+            </span>
+            <span className="shrink-0 text-[length:var(--text-sm)] text-[var(--color-accent)]">
+              {webinar ? formatWhen(webinar.starts_at) : "дивитись"}
+            </span>
+          </Link>
 
           <div className="flex flex-col gap-[var(--space-4)]">
             {outline.modules.map((mod, i) => {

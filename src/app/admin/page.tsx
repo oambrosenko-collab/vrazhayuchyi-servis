@@ -6,6 +6,10 @@ import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { summarise, formatSince, STUCK_AFTER_DAYS } from "@/lib/team";
 import { RoleNav } from "@/components/role-nav";
+import { RadialMeter } from "@/components/charts/radial-meter";
+import { Meter } from "@/components/charts/meter";
+import { Distribution } from "@/components/charts/distribution";
+import { TOUCH_MEANING } from "@/lib/webinars";
 import { InvitePanel } from "./invite-panel";
 
 // Per-user and cookie-dependent: there is no static shell worth
@@ -60,6 +64,10 @@ function Stat({
     </Card>
   );
 }
+
+/** A string, not JSX text: the apostrophe would need escaping. */
+const NO_WEBINARS_YET =
+  "Вебінарів за останні три місяці ще не було — щойно відбудеться перший, тут з'явиться відвідуваність команди.";
 
 export default async function AdminPage() {
   // Reads the session cookie and the clock (token expiry, access dates),
@@ -124,13 +132,22 @@ export default async function AdminPage() {
         </div>
       )}
 
-      <div className="mb-[var(--space-6)] grid gap-[var(--space-4)] sm:grid-cols-2 lg:grid-cols-4">
-        <Stat
-          label="Місць зайнято"
-          value={`${org.seats_taken} із ${org.package_size}`}
-          hint={`активація ${activation}%`}
-          tone={activation < 60 && org.seats_taken > 0 ? "warning" : undefined}
-        />
+      <div className="mb-[var(--space-6)] grid gap-[var(--space-4)] lg:grid-cols-[18rem_1fr]">
+        {/* The one ring on this screen. Seat activation is the number that
+            predicts renewal, so it gets the form the eye lands on first —
+            and the only accent, per the colour rule. */}
+        <Card className="flex items-center justify-center">
+          <RadialMeter
+            value={org.seats_taken}
+            max={org.package_size}
+            valueText={String(org.seats_taken)}
+            caption={`із ${org.package_size} місць зайнято · ${activation}%`}
+            tone={activation < 60 && org.seats_taken > 0 ? "warning" : "accent"}
+            title={`Зайнято ${org.seats_taken} місць із ${org.package_size}, це ${activation} відсотків`}
+          />
+        </Card>
+
+        <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
         <Stat
           label="Середній прогрес"
           value={`${team.averagePercent}%`}
@@ -149,7 +166,44 @@ export default async function AdminPage() {
           tone={team.stuck.length > 0 ? "warning" : undefined}
         />
         <Stat label="Доступ до" value={formatDate(org.expires_at)} />
+        </div>
       </div>
+
+      {/* The average alone is a trap: it reads the same whether the team is
+          evenly halfway or split between finished and never-started. */}
+      <Card className="mb-[var(--space-6)]">
+        <Label>Де зараз команда</Label>
+        <div className="mt-[var(--space-4)] grid gap-[var(--space-8)] lg:grid-cols-2">
+          <Distribution
+            bins={team.bins}
+            total={team.active.length}
+            empty="Місця ще ніхто не зайняв — надішли команді посилання з панелі нижче."
+          />
+
+          <div className="flex flex-col justify-center gap-[var(--space-4)]">
+            {team.webinarsHeld > 0 ? (
+              <Meter
+                label="Вебінари за три місяці"
+                value={team.webinarsTouched}
+                max={team.webinarsHeld}
+                valueText={`${team.webinarsTouched} з ${team.webinarsHeld}`}
+                hint={`Зараховується ${TOUCH_MEANING}.`}
+              />
+            ) : (
+              <p className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
+                {NO_WEBINARS_YET}
+              </p>
+            )}
+
+            <Meter
+              label="Середній прогрес по курсу"
+              value={team.averagePercent}
+              max={100}
+              valueText={`${team.averagePercent}%`}
+            />
+          </div>
+        </div>
+      </Card>
 
       {inviteUrl && (
         <div className="mb-[var(--space-6)]">

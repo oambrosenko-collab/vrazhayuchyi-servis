@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { kyivWallClockToIso } from "@/lib/webinars";
 
 export type SuResult = { ok?: string; error?: string };
 
@@ -33,9 +34,12 @@ function revalidateSu() {
   revalidatePath("/su/orgs");
   revalidatePath("/su/course");
   revalidatePath("/su/quizzes");
+  revalidatePath("/su/webinars");
   // The learner and admin screens read the same content.
   revalidatePath("/learn");
+  revalidatePath("/learn/webinars");
   revalidatePath("/admin");
+  revalidatePath("/admin/team");
 }
 
 /* ------------------------------- orgs ------------------------------- */
@@ -299,4 +303,72 @@ export async function setPassScore(
   );
   revalidateSu();
   return r;
+}
+
+/* ------------------------------ webinars ----------------------------- */
+
+/**
+ * The editor types Kyiv wall clock; the column is a timestamptz. The
+ * conversion happens here rather than in the browser, because the
+ * browser's zone is whatever the laptop is set to and has nothing to do
+ * with when the broadcast actually starts.
+ */
+export async function saveWebinar(form: FormData): Promise<SuResult> {
+  const id = String(form.get("id") ?? "").trim() || null;
+  const title = String(form.get("title") ?? "").trim();
+  const description = String(form.get("description") ?? "").trim();
+  const date = String(form.get("date") ?? "");
+  const time = String(form.get("time") ?? "");
+  const duration = Number(form.get("duration_min") ?? 60);
+  const joinUrl = String(form.get("join_url") ?? "").trim();
+  const recordingUrl = String(form.get("recording_url") ?? "").trim();
+  const published = form.get("published") === "on";
+
+  if (title.length < 2) return { error: "Назва вебінара закоротка." };
+
+  const startsAt = kyivWallClockToIso(date, time);
+  if (!startsAt) return { error: "Вкажи дату й час ефіру." };
+
+  if (!Number.isInteger(duration) || duration < 10 || duration > 240) {
+    return { error: "Тривалість — від 10 до 240 хвилин." };
+  }
+
+  // The same rule as the check constraint, said in Ukrainian before the
+  // database says it in Postgres.
+  for (const url of [joinUrl, recordingUrl]) {
+    if (url && !url.startsWith("https://")) {
+      return { error: "Посилання має починатись із https://" };
+    }
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("su_save_webinar", {
+    p_id: id,
+    p_title: title,
+    p_description: description || null,
+    p_starts_at: startsAt,
+    p_duration_min: duration,
+    p_join_url: joinUrl || null,
+    p_recording_url: recordingUrl || null,
+    p_published: published,
+  });
+
+  if (error || data?.[0]?.out_ok !== true) {
+    return { error: "Не вдалося зберегти вебінар." };
+  }
+
+  revalidateSu();
+  return { ok: id ? "Вебінар оновлено." : "Вебінар створено." };
+}
+
+export async function deleteWebinar(webinarId: string): Promise<SuResult> {
+  const supabase = await createClient();
+  return rpcGuard(
+    () => supabase.rpc("su_delete_webinar", { p_id: webinarId }),
+    "Вебінар видалено.",
+    "Не вдалося видалити вебінар.",
+  ).then((r) => {
+    revalidateSu();
+    return r;
+  });
 }
