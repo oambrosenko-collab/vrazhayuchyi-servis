@@ -1,9 +1,10 @@
 import { connection } from "next/server";
 import Link from "next/link";
-import { Alert, Button, Card, Label, Screen } from "@/components/ui";
+import { Alert, Card, Label, Screen } from "@/components/ui";
 import { requireActiveUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buildOutline, formatDuration } from "@/lib/course";
+import { RoleNav } from "@/components/role-nav";
 
 // Per-user and cookie-dependent: there is no static shell worth
 // prerendering, so render on request instead of streaming a placeholder.
@@ -56,10 +57,10 @@ function QuizRow({
       >
         {passed ? "✓" : ""}
       </span>
-      <span className="min-w-0 flex-1">{title}</span>
+      <span className="min-w-0 flex-1 truncate">{title}</span>
       <span
         className={
-          "shrink-0 text-[length:var(--text-sm)] " +
+          "shrink-0 whitespace-nowrap text-[length:var(--text-sm)] " +
           (passed
             ? "text-[var(--color-success)]"
             : "text-[var(--color-text-secondary)]")
@@ -71,7 +72,7 @@ function QuizRow({
   );
 
   const shell =
-    "mt-[var(--space-3)] flex min-h-[var(--tap-min)] items-center gap-[var(--space-3)] rounded-[var(--radius-md)] border border-[var(--color-border)] px-[var(--space-3)] py-[var(--space-3)]";
+    "mt-[var(--space-3)] flex min-h-[var(--tap-min)] items-center gap-[var(--space-2)] rounded-[var(--radius-md)] border border-[var(--color-border)] px-[var(--space-3)] py-[var(--space-2)]";
 
   if (locked) {
     return (
@@ -128,18 +129,13 @@ export default async function LearnPage() {
 
   return (
     <Screen>
-      <div className="mb-[var(--space-6)] flex items-start justify-between gap-[var(--space-4)]">
-        <div>
-          <Label>{org?.name ?? "Заклад"}</Label>
-          <h1 className="mt-[var(--space-1)] text-[length:var(--text-h1)] font-[var(--weight-bold)]">
-            Привіт, {user.full_name.split(" ")[0]}
-          </h1>
-        </div>
-        {(user.role === "org_admin" || user.role === "superadmin") && (
-          <Link href="/admin" className="shrink-0">
-            <Button variant="neutral">Кабінет</Button>
-          </Link>
-        )}
+      <RoleNav role={user.role} current="learn" orgName={org?.name} />
+
+      <div className="mb-[var(--space-6)]">
+        {org?.name && <Label>{org.name}</Label>}
+        <h1 className="mt-[var(--space-1)] text-[length:var(--text-h1)] font-[var(--weight-bold)]">
+          Привіт, {user.full_name.split(" ")[0]}
+        </h1>
       </div>
 
       {expired && (
@@ -246,7 +242,7 @@ export default async function LearnPage() {
                       bestScore={quiz.best_score}
                       attempts={quiz.attempts}
                       locked={!mod.lessons.every((l) => l.completed)}
-                      lockedHint="спершу всі уроки модуля"
+                      lockedHint="спочатку уроки"
                     />
                   )}
                 </Card>
@@ -266,7 +262,7 @@ export default async function LearnPage() {
                   bestScore={finalQuiz.best_score}
                   attempts={finalQuiz.attempts}
                   locked={outline.done < outline.total}
-                  lockedHint="спершу всі уроки курсу"
+                  lockedHint="спочатку уроки"
                 />
               </Card>
             )}
@@ -294,12 +290,6 @@ export default async function LearnPage() {
           </div>
         </>
       )}
-
-      <form action="/auth/sign-out" method="post" className="mt-[var(--space-8)]">
-        <Button variant="ghost" type="submit">
-          Вийти
-        </Button>
-      </form>
     </Screen>
   );
 }

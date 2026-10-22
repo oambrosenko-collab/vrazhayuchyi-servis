@@ -5,6 +5,7 @@ import { requireOrgAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { summarise, formatSince, STUCK_AFTER_DAYS } from "@/lib/team";
+import { RoleNav } from "@/components/role-nav";
 import { InvitePanel } from "./invite-panel";
 
 // Per-user and cookie-dependent: there is no static shell worth
@@ -65,7 +66,7 @@ export default async function AdminPage() {
   // neither of which a prerender pass can resolve.
   await connection();
 
-  await requireOrgAdmin();
+  const admin = await requireOrgAdmin();
   const supabase = await createClient();
 
   const [{ data: overviewRows }, { data: teamRows }] = await Promise.all([
@@ -98,6 +99,8 @@ export default async function AdminPage() {
 
   return (
     <Screen width="wide">
+      <RoleNav role={admin.role} current="admin" />
+
       <div className="mb-[var(--space-6)]">
         <Label>Кабінет закладу</Label>
         <h1 className="mt-[var(--space-1)] text-[length:var(--text-h1)] font-[var(--weight-bold)]">
@@ -201,15 +204,6 @@ export default async function AdminPage() {
           </Alert>
         </div>
       )}
-
-      <form action="/auth/sign-out" method="post" className="mt-[var(--space-8)]">
-        <button
-          type="submit"
-          className="text-[length:var(--text-sm)] text-[var(--color-text-secondary)] underline"
-        >
-          Вийти
-        </button>
-      </form>
     </Screen>
   );
 }
