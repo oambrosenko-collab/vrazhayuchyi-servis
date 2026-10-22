@@ -120,6 +120,13 @@
 
 ## Шрифт
 
-Fixel (Display + Text) від MacPaw, Open Font License. Качається з fixel.macpaw.com,
-кладеться в `public/fonts/`. `@font-face` уже прописані в `docs/design-tokens.css` —
-звірити імена файлів із тими, що в архіві, інакше браузер мовчки підставить системний шрифт.
+Fixel (Display + Text) від MacPaw, Open Font License. **Уже в репозиторії**:
+`public/fonts/`, по чотири ваги на родину (400/500/600/700) у woff2.
+
+Варіативних woff2 в архіві MacPaw немає — тільки статичні ваги й один
+`FixelVariable.ttf` на 471 КБ, який до того ж є однією родиною, а не парою
+Display + Text. Тому `@font-face` статичні й названі рівно так, як файли
+на диску. Курсивів немає: продукт їх не використовує.
+
+`public/fonts/` містить ще й Roboto — він не для сторінок, а вбудовується
+в PDF сертифіката. Деталі в `docs/SETUP.md`.

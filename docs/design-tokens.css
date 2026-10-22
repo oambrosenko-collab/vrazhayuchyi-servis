@@ -19,18 +19,80 @@
       браузер мовчки підставить системний шрифт, і ніхто не помітить.
    ============================================================================ */
 
+/* The distributed archive has no variable woff2 — only static weights
+   and a single 471 KB variable TTF that is one family rather than the
+   Display/Text pair this system uses. So: static faces, named exactly as
+   the files on disk.
+
+   Declaring eight faces costs nothing at load. A browser fetches a face
+   only when something on the page actually uses that family and weight,
+   so a screen with one heading pulls one file, not eight.
+
+   Italics are not shipped: nothing in the product uses them, and a face
+   nobody references is dead weight in the repository. */
+
 @font-face {
   font-family: "Fixel Display";
-  src: url("/fonts/FixelDisplay-Variable.woff2") format("woff2-variations");
-  font-weight: 300 900;
+  src: url("/fonts/FixelDisplay-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fixel Display";
+  src: url("/fonts/FixelDisplay-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fixel Display";
+  src: url("/fonts/FixelDisplay-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fixel Display";
+  src: url("/fonts/FixelDisplay-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+@font-face {
+  font-family: "Fixel Text";
+  src: url("/fonts/FixelText-Regular.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
   font-family: "Fixel Text";
-  src: url("/fonts/FixelText-Variable.woff2") format("woff2-variations");
-  font-weight: 300 900;
+  src: url("/fonts/FixelText-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fixel Text";
+  src: url("/fonts/FixelText-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fixel Text";
+  src: url("/fonts/FixelText-Bold.woff2") format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
