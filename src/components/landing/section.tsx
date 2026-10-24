@@ -34,19 +34,35 @@ export function Section({
   );
 }
 
-/** Restrained label + heading, per rule 3 of the mood rules in the tokens. */
+/**
+ * Restrained label + heading, per rule 3 of the mood rules in the tokens.
+ *
+ * The label can take the accent: the reference colours its section
+ * eyebrows in the brand hue, and a 12px caps line is a mark rather than an
+ * object, so it does not spend the one accent a screen is allowed. `lead`
+ * accepts nodes so a section can colour a phrase inside it.
+ */
 export function SectionHead({
   label,
   title,
   lead,
+  labelTone = "muted",
 }: {
   label: string;
   title: string;
-  lead?: string;
+  lead?: React.ReactNode;
+  labelTone?: "muted" | "accent";
 }) {
   return (
     <header className="mb-[var(--space-8)] max-w-[44rem]">
-      <span className="text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-text-secondary)]">
+      <span
+        className={cn(
+          "text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)]",
+          labelTone === "accent"
+            ? "font-[var(--weight-semibold)] text-[var(--color-accent)]"
+            : "text-[var(--color-text-secondary)]",
+        )}
+      >
         {label}
       </span>
       <h2 className="mt-[var(--space-3)] text-[length:var(--text-h1)] font-[var(--weight-bold)] md:text-[2.25rem]">

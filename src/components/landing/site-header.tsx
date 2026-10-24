@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const LINKS = [
-  { href: "#year", label: "Чому не курс" },
-  { href: "#how", label: "Як працює" },
+  { href: "#year", label: "Річний доступ" },
+  { href: "#how", label: "Порядок роботи" },
   { href: "#pricing", label: "Ціни" },
-  { href: "#faq", label: "Питання" },
+  { href: "#faq", label: "Запитання" },
 ];
 
 /**

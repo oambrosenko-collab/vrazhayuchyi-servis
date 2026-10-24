@@ -1,53 +1,87 @@
 import { Card, Label } from "@/components/ui";
+import { TRIO } from "./accents";
 import { Section, SectionHead } from "./section";
 
 /**
- * Two causes, not one.
+ * Why the product is built as a year rather than a course.
  *
- * The earlier version blamed turnover alone, which quietly argued that the
- * product is onboarding — and onboarding is exactly what an owner refuses
- * to pay a year for. The second cause is the one that makes a year make
- * sense: a waiter who has been here twelve months is also drifting.
+ * Two facts act at once: the room turns over, and the attention of the
+ * people already in it fades. Only the first half carries numbers, because
+ * only it has sourced ones — the second stays prose rather than inventing
+ * a statistic.
  *
- * Only the turnover half carries numbers, because only it has sourced
- * ones. The decay half stays prose rather than inventing a statistic.
+ * Colour here does a job rather than decorating. The three figures run in
+ * the chart-token order the design system fixed (accent, periwinkle,
+ * mint), and the accent sits on the one number that carries the argument:
+ * if the room did not turn over, nothing else on this page would be
+ * necessary. The other two are context, so they take the complementary
+ * hues and step back.
  */
 const TURNOVER_FACTS = [
   {
     value: "50–100%",
     label: "Плинність",
-    hint: "За рік зал оновлюється майже повністю",
+    hint: "Середньорічний показник у галузі HoReCa",
+    tone: TRIO[0],
   },
   {
     value: "2–3 дні",
-    label: "Від найму до зміни",
-    hint: "Стільки реально лишається на підготовку",
+    label: "Від найму до залу",
+    hint: "Стільки часу є, щоб новачок почав працювати як команда",
+    tone: TRIO[1],
   },
   {
     value: "~15 людей",
     label: "Новачків за рік",
-    hint: "У закладі на 25 осіб при плинності 60%",
+    hint: "Для закладу на 25 осіб за плинності 60%",
+    tone: TRIO[2],
   },
 ];
 
 export function Problem() {
   return (
-    <Section className="border-t border-[var(--color-border)]">
+    /* The extra top padding at `lg` is the strip's lower half plus the
+     * section's own rhythm: without it the first label sits ten pixels
+     * under the panel, which reads as a collision rather than a seam. */
+    <Section className="border-t border-[var(--color-border)] lg:pt-[12rem]">
       <SectionHead
-        label="Чому так стається"
-        title="Рівень залу тримається на двох-трьох людях, а не на системі"
-        lead="Поки сильні офіціанти в зміні, усе добре, і здається, що процес налагоджений. Процесу немає — є конкретні люди. Один пішов у заклад навпроти, другий вигорів, третій вийшов у зал позавчора й не знає, як підійти до столика з дитиною. Гість цього не аналізує — він просто більше не бронює."
+        label="Суть підходу"
+        labelTone="accent"
+        title="Враження від сервісу створює увага конкретної людини — і саме її потрібно відтворювати"
+        lead={
+          <>
+            Гість повертається не через дотримання регламенту, а через
+            відчуття, що про нього подбали:{" "}
+            <span className="text-[var(--color-text)]">
+              побачили, що йому потрібно зараз, і дали трохи більше
+            </span>
+            . Таке враження створює конкретний працівник у конкретну зміну,
+            тому завдання платформи — зробити цю увагу відтворюваною: закласти
+            її новим працівникам і підтримувати в тих, хто працює давно.
+          </>
+        }
       />
 
       <span className="text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-text-secondary)]">
-        Перше: зал змінюється швидше, ніж ви встигаєте вчити
+        Що враховує система: склад команди оновлюється
       </span>
 
       <div className="mt-[var(--space-4)] grid gap-[var(--space-4)] sm:grid-cols-3">
         {TURNOVER_FACTS.map((f) => (
-          <Card key={f.label}>
+          <Card key={f.label} className="relative overflow-hidden">
+            {/* A rule in the figure's own colour, across the top edge of
+                the card — the mark that says these three belong to one
+                set without painting three loud panels. */}
+            <span
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-[3px]"
+              style={{ background: f.tone.color }}
+            />
             <Label>{f.label}</Label>
-            <p className="mt-[var(--space-2)] text-[length:var(--text-display)] font-[var(--weight-bold)]">
+            <p
+              className="mt-[var(--space-2)] text-[length:var(--text-display)] font-[var(--weight-bold)]"
+              style={{ color: f.tone.color }}
+            >
               {f.value}
             </p>
             <p className="mt-[var(--space-1)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
@@ -57,16 +91,23 @@ export function Problem() {
         ))}
       </div>
 
-      <div className="mt-[var(--space-8)] max-w-[44rem] border-l border-[var(--color-border-strong)] pl-[var(--space-4)]">
-        <span className="text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-text-secondary)]">
-          Друге: те, чого не буде видно у скаргах
+      <div
+        className="mt-[var(--space-8)] max-w-[44rem] rounded-r-[var(--radius-md)] border-l-2 border-[var(--color-accent)] py-[var(--space-2)] pl-[var(--space-6)]"
+        style={{
+          background:
+            "linear-gradient(to right, var(--color-accent-soft), transparent 70%)",
+        }}
+      >
+        <span className="text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-accent)]">
+          Що враховує система: увага слабшає без підтримки
         </span>
         <p className="mt-[var(--space-3)] text-[var(--color-text-secondary)]">
-          Офіціант, який працює рік, не порушує жодного правила. Він просто
-          вітається коротше, ніж колись, перестає рекомендувати, бо «і так
-          замовлять», і проковтує прощання, коли зал повний. Жодна з цих
-          дрібниць не дійде до вас скаргою. Вони осідають у середньому чеку й у
-          тому, що столик у вівторок знову порожній.
+          Працівник із річним стажем не порушує регламенту — поступово
+          коротшає вітання, зникає рекомендація, формальним стає прощання.
+          Саме на цьому тримається вау-ефект, і саме це згасає першим. Тому
+          навчання в системі не завершується курсом: щомісячний вебінар
+          повертає прийоми турботи в роботу, а звітність показує, у кого
+          рівень тримається, а кому час приділити увагу.
         </p>
       </div>
     </Section>

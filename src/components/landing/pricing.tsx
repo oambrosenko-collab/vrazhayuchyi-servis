@@ -1,3 +1,4 @@
+import { TRIO } from "./accents";
 import { Section, SectionHead } from "./section";
 
 /** Packages and per-seat prices are the PRD's business model table. */
@@ -29,11 +30,11 @@ const PACKAGES = [
 ];
 
 const INCLUDED = [
-  "Ввідний курс і доступ на 12 місяців",
+  "Вхідний курс і доступ на 12 місяців",
   "Місця з правом перевикористання",
-  "Щомісячний вебінар і архів записів",
+  "Щомісячні вебінари та архів записів",
   "Сертифікати для персоналу",
-  "Звіт по команді для власника",
+  "Звітність для керівника закладу",
 ];
 
 const EXCLUDED = [
@@ -44,11 +45,12 @@ const EXCLUDED = [
 
 export function Pricing() {
   return (
-    <Section id="pricing" className="border-t border-[var(--color-border)]">
+    <Section id="pricing" className="border-t border-[var(--color-border)] bg-[var(--color-bg)]">
       <SectionHead
         label="Ціни"
-        title="Разова покупка, доступ 12 місяців"
-        lead="Порівнювати варто не з ціною курсу, а з вартістю нинішнього стану: порахуйте, скільки годин управляючого йде на одного новачка, помножте на його ставку й на п'ятнадцять новачків за рік. Пакет коштує помітно менше — і в нього входять ще дванадцять розборів і звіт, з якого видно, за що ви заплатили."
+        labelTone="accent"
+        title="Разова оплата, доступ на 12 місяців"
+        lead="У вартість пакета входить усе, що утримує рівень сервісу протягом року: вхідний курс для кожного нового працівника, дванадцять вебінарів із новими прийомами, тести, сертифікати та звітність для керівника. Для орієнтиру: витрати на самостійну підготовку одного новачка силами управляючого, помножені на п'ятнадцять новачків за рік, зазвичай перевищують вартість пакета."
       />
 
       <div className="grid gap-[var(--space-4)] md:grid-cols-3">
@@ -102,7 +104,17 @@ export function Pricing() {
 
       <div className="mt-[var(--space-6)] grid gap-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-[var(--space-6)] md:grid-cols-3">
         <div>
-          <h3 className="font-[var(--weight-semibold)]">Входить у пакет</h3>
+          <h3
+            className="flex items-center gap-[var(--space-2)] font-[var(--weight-semibold)]"
+            style={{ color: TRIO[0].color }}
+          >
+            <span
+              aria-hidden
+              className="h-[2px] w-[1.25rem] shrink-0"
+              style={{ background: TRIO[0].color }}
+            />
+            Входить у пакет
+          </h3>
           <ul className="mt-[var(--space-2)] flex flex-col gap-[var(--space-1)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
             {INCLUDED.map((i) => (
               <li key={i}>{i}</li>
@@ -110,7 +122,17 @@ export function Pricing() {
           </ul>
         </div>
         <div>
-          <h3 className="font-[var(--weight-semibold)]">Не входить</h3>
+          <h3
+            className="flex items-center gap-[var(--space-2)] font-[var(--weight-semibold)]"
+            style={{ color: TRIO[1].color }}
+          >
+            <span
+              aria-hidden
+              className="h-[2px] w-[1.25rem] shrink-0"
+              style={{ background: TRIO[1].color }}
+            />
+            Не входить
+          </h3>
           <ul className="mt-[var(--space-2)] flex flex-col gap-[var(--space-1)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
             {EXCLUDED.map((i) => (
               <li key={i}>{i}</li>
@@ -118,7 +140,17 @@ export function Pricing() {
           </ul>
         </div>
         <div>
-          <h3 className="font-[var(--weight-semibold)]">Мережа, 50+ місць</h3>
+          <h3
+            className="flex items-center gap-[var(--space-2)] font-[var(--weight-semibold)]"
+            style={{ color: TRIO[2].color }}
+          >
+            <span
+              aria-hidden
+              className="h-[2px] w-[1.25rem] shrink-0"
+              style={{ background: TRIO[2].color }}
+            />
+            Мережа, 50+ місць
+          </h3>
           <p className="mt-[var(--space-2)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]">
             Ціна індивідуальна — напишіть кількість закладів і людей у заявці.
             Рахунок для української компанії виставляється в гривні за курсом

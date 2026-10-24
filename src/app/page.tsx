@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/landing/site-header";
 import { Hero } from "@/components/landing/hero";
+import { Highlights } from "@/components/landing/highlights";
 import { Problem } from "@/components/landing/problem";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { YearValue } from "@/components/landing/year-value";
 import { Techniques } from "@/components/landing/techniques";
+import { Trainer } from "@/components/landing/trainer";
 import { SeatReuse } from "@/components/landing/seat-reuse";
 import { ProductShots } from "@/components/landing/product-shots";
 import { Pricing } from "@/components/landing/pricing";
@@ -15,7 +17,7 @@ import { SiteFooter } from "@/components/landing/site-footer";
 export const metadata: Metadata = {
   title: "Вражаючий сервіс — навчання персоналу для ресторанів",
   description:
-    "Гість рідко скаржиться — він просто не повертається. Ввідний курс сервісу, щомісячні розбори для команди й звіт, у якому рівень залу видно поіменно. Пакети на 10–50 місць, доступ на 12 місяців.",
+    "Сервіс, заради якого гості повертаються: турбота про гостя як система. Вхідний курс для нових працівників, щомісячні вебінари для команди та звітність, що показує рівень поіменно. Пакети на 10–50 місць, доступ на 12 місяців.",
 };
 
 /**
@@ -38,10 +40,12 @@ export default function Home() {
       <SiteHeader />
       <main className="grow">
         <Hero />
+        <Highlights />
         <Problem />
         <HowItWorks />
         <YearValue />
         <Techniques />
+        <Trainer />
         <SeatReuse />
         <ProductShots />
         <Pricing />
