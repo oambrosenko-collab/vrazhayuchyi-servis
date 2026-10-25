@@ -54,15 +54,17 @@ const PHOTO =
  * thing is hidden from screen readers — these are techniques, not
  * quotations from anybody.
  */
-function QuoteMark() {
+function QuoteMark({ color }: { color: string }) {
   return (
     <svg
       viewBox="0 0 48 34"
-      width="52"
-      height="37"
+      width="34"
+      height="24"
       aria-hidden
-      className="text-[var(--color-text-secondary)]"
-      fill="currentColor"
+      style={{ color }}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
     >
       <path d="M0 0h20v20l-6 14H4l6-14H0z" />
       <path d="M28 0h20v20l-6 14h-10l6-14h-10z" />
@@ -79,7 +81,7 @@ export function Techniques() {
         aria-hidden
         fill
         sizes="100vw"
-        className="object-cover opacity-[0.3] grayscale"
+        className="scale-x-[-1] object-cover opacity-[0.3] grayscale"
       />
       <div
         aria-hidden
@@ -106,9 +108,10 @@ export function Techniques() {
         {TECHNIQUES.map((t) => (
           <li
             key={t.title}
-            className="border-l-2 border-[var(--color-text-secondary)] pl-[var(--space-4)]"
+            className="border-l-2 pl-[var(--space-4)]"
+            style={{ borderColor: "var(--color-periwinkle)" }}
           >
-            <QuoteMark />
+            <QuoteMark color="var(--color-periwinkle)" />
             <h3 className="mt-[var(--space-4)] text-[length:var(--text-h3)] font-[var(--weight-semibold)]">
               {t.title}
             </h3>
@@ -122,7 +125,7 @@ export function Techniques() {
       {/* The same tinted rail as «Суть підходу»: a closing note that
           belongs to the section rather than trailing off under it. */}
       <div
-        className="mt-[var(--space-8)] max-w-[44rem] rounded-r-[var(--radius-md)] border-l-2 border-[var(--color-accent)] py-[var(--space-3)] pl-[var(--space-6)]"
+        className="mt-[50px] max-w-[44rem] rounded-r-[var(--radius-md)] border-l-2 border-[var(--color-accent)] py-[var(--space-3)] pl-[var(--space-6)]"
         style={{
           background:
             "linear-gradient(to right, var(--color-accent-soft), transparent 70%)",

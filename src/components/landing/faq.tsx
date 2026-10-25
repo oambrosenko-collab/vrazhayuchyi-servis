@@ -51,19 +51,26 @@ const QA = [
 export function Faq() {
   return (
     <Section id="faq" className="border-t border-[var(--color-border)]">
-      <SectionHead
-        label="Поширені запитання"
-        labelTone="accent"
-        title="Запитання, які виникають першими"
-      />
+      {/* One block, centred as a whole (`mx-auto max-w-[48rem]`) — the
+          heading and the question list share this same column rather than
+          each picking their own width, which is what kept them visually
+          out of step. Inside it, the heading stays centred and the
+          questions stay left-aligned, both against this block's edges, not
+          the section's. */}
+      <div className="mx-auto max-w-[48rem]">
+        <SectionHead
+          label="Поширені запитання"
+          labelTone="accent"
+          title="Запитання, які виникають першими"
+          align="center"
+        />
 
-      <div className="max-w-[48rem]">
         {QA.map((item) => (
           <details
             key={item.q}
             className="group border-b border-[var(--color-border)]"
           >
-            <summary className="flex min-h-[var(--tap-min)] cursor-pointer list-none items-center justify-between gap-[var(--space-4)] py-[var(--space-4)] font-[var(--weight-semibold)]">
+            <summary className="flex min-h-[var(--tap-min)] cursor-pointer list-none items-center justify-between gap-[var(--space-4)] py-[var(--space-4)] font-[var(--weight-semibold)] [&::-webkit-details-marker]:hidden">
               {item.q}
               <span
                 aria-hidden

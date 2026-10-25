@@ -75,9 +75,10 @@ export function Hero() {
       />
 
       {/* The bottom inset clears the half of the strip that rides up
-          over the hero (~94px) and leaves a button's height of air above
-          it. */}
-      <div className="mx-auto w-full max-w-[72rem] px-[var(--space-4)] py-[var(--space-16)] lg:pb-[9.5rem]">
+          over the hero (~94px) and leaves roughly two buttons' height of
+          air above it — nudged up one button's height (44px) from the
+          original single-button gap, on request. */}
+      <div className="mx-auto w-full max-w-[96rem] px-[var(--space-4)] py-[var(--space-16)] lg:pb-[12.25rem]">
         <div className="max-w-[56rem]">
           <span className="text-[length:var(--text-xs)] uppercase tracking-[var(--tracking-label)] text-[var(--color-text-secondary)]">
             Вражаючий сервіс для ресторанів

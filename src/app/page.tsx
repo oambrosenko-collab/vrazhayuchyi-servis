@@ -45,10 +45,10 @@ export default function Home() {
         <HowItWorks />
         <YearValue />
         <Techniques />
-        <Trainer />
         <SeatReuse />
         <ProductShots />
         <Pricing />
+        <Trainer />
         <Faq />
         <RequestForm />
       </main>

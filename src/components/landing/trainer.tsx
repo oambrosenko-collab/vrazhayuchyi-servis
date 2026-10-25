@@ -19,10 +19,10 @@ import { Section } from "./section";
  * It must be read by Viktoriia before this page is public.
  */
 const PHOTO: string | null =
-  "https://res.cloudinary.com/zb7a4nip/image/upload/v1792747683/Gemini_Generated_Image_sptdqdsptdqdsptd-2.jpg";
+  "https://res.cloudinary.com/zb7a4nip/image/upload/c_fill,g_face,ar_4:5/v1792846710/close-up-portrait-smiling-blonde-businesswoman-formal-dressed-isolated-dark-textured-background-2.jpg";
 
 const BIO = [
-  "Понад п'ятнадцять років Вікторія Дубчак вибудовує сервіс у закладах — від невеликих кав'ярень до ресторанів, відомих в Україні. Предмет її роботи — не гостинність як концепція, а те, що гість відчуває за столом: чи побачили, що йому потрібно, чи дали трохи більше, ніж він очікував.",
+  "Понад п'ятнадцять років Вікторія Хижняк вибудовує сервіс у закладах — від невеликих кав'ярень до ресторанів, відомих в Україні. Предмет її роботи — не гостинність як концепція, а те, що гість відчуває за столом: чи побачили, що йому потрібно, чи дали трохи більше, ніж він очікував.",
   "Курс і щомісячні вебінари на платформі веде вона, тому в основу матеріалу покладено прийоми, перевірені в реальних залах, а не теоретичні посібники з гостинності.",
 ];
 
@@ -41,7 +41,7 @@ export function Trainer() {
           {PHOTO ? (
             <Image
               src={PHOTO}
-              alt="Вікторія Дубчак"
+              alt="Вікторія Хижняк"
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover object-top"
@@ -55,15 +55,15 @@ export function Trainer() {
 
         <div className="bg-[var(--color-surface)] p-[var(--space-8)] md:p-[var(--space-12)]">
           <span className="text-[length:var(--text-xs)] font-[var(--weight-semibold)] uppercase tracking-[var(--tracking-label)] text-[var(--color-accent)]">
-            Хто веде курс
+            Тренер курсу
           </span>
 
           <h2 className="mt-[var(--space-3)] text-[length:var(--text-h1)] font-[var(--weight-bold)] md:text-[2.25rem]">
-            Вікторія Дубчак
+            Вікторія Хижняк
           </h2>
 
-          <p className="mt-[var(--space-2)] text-[var(--color-accent)]">
-            Бізнес-консультант і тренер · понад 15 років практики
+          <p className="mt-[var(--space-2)] text-[var(--color-periwinkle)]">
+            Бізнес-консультант і тренер · понад 10 років практики
           </p>
 
           {BIO.map((para) => (
@@ -79,14 +79,8 @@ export function Trainer() {
               point at, and a button that 404s costs more trust than the
               extra paragraphs buy. */}
           <details className="group mt-[var(--space-6)]">
-            <summary className="tap inline-flex min-h-[var(--tap-min)] cursor-pointer list-none items-center gap-[var(--space-2)] rounded-[var(--radius-md)] border border-[var(--color-border-strong)] px-[var(--space-6)] font-[var(--weight-semibold)] hover:bg-[var(--color-surface-raised)]">
-              Біографія
-              <span
-                aria-hidden
-                className="text-[var(--color-text-secondary)] transition-transform duration-[var(--duration-fast)] group-open:rotate-45"
-              >
-                +
-              </span>
+            <summary className="tap inline-flex min-h-[var(--tap-min)] cursor-pointer list-none items-center font-[var(--weight-semibold)]">
+              Детальніше...
             </summary>
 
             {DETAIL.map((para) => (

@@ -47,7 +47,7 @@ export function Problem() {
       <SectionHead
         label="Суть підходу"
         labelTone="accent"
-        title="Враження від сервісу створює увага конкретної людини — і саме її потрібно відтворювати"
+        title="Враження створює людина — платформа робить цю навичку системою"
         lead={
           <>
             Гість повертається не через дотримання регламенту, а через
@@ -92,7 +92,7 @@ export function Problem() {
       </div>
 
       <div
-        className="mt-[var(--space-8)] max-w-[44rem] rounded-r-[var(--radius-md)] border-l-2 border-[var(--color-accent)] py-[var(--space-2)] pl-[var(--space-6)]"
+        className="mt-[50px] max-w-[44rem] rounded-r-[var(--radius-md)] border-l-2 border-[var(--color-accent)] py-[var(--space-2)] pl-[var(--space-6)]"
         style={{
           background:
             "linear-gradient(to right, var(--color-accent-soft), transparent 70%)",

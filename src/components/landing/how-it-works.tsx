@@ -51,12 +51,21 @@ export function HowItWorks() {
             <li
               key={s.title}
               className={
-                openRight ? "md:pr-[16%]" : "md:pl-[16%]"
+                openRight
+                  ? "md:pr-[16%]"
+                  : // Step 2 only: nudged past the shared 16% so its
+                    // heading's left edge lands on the second pillar
+                    // card's own left edge in the section below — the
+                    // fixed-width numeral and its gap eat into the offset
+                    // in a way plain 16% doesn't account for.
+                    i === 1
+                    ? "md:pl-[23%]"
+                    : "md:pl-[16%]"
               }
             >
               <div
                 className={
-                  "relative flex items-center gap-[var(--space-6)] border-y border-[var(--color-border-strong)] px-[var(--space-6)] py-[var(--space-8)] md:gap-[var(--space-12)] md:px-[var(--space-12)] md:py-[var(--space-12)] " +
+                  "relative flex items-center gap-[var(--space-6)] border-y border-[var(--color-border-strong)] px-[var(--space-6)] py-[var(--space-5)] md:gap-[var(--space-12)] md:px-[var(--space-12)] md:py-[var(--space-6)] " +
                   (openRight
                     ? "rounded-l-[var(--radius-xl)] border-l md:rounded-l-[4rem]"
                     : "rounded-r-[var(--radius-xl)] border-r md:rounded-r-[4rem] md:flex-row-reverse")

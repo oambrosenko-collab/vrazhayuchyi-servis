@@ -75,13 +75,23 @@ export function RequestForm() {
         <div>
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-[var(--space-4)]"
+            className="flex flex-col gap-[var(--space-3)]"
           >
             <Field label="Назва закладу">
-              <Input name="venue" required autoComplete="organization" />
+              <Input
+                name="venue"
+                required
+                autoComplete="organization"
+                style={{ paddingTop: "var(--space-2)", paddingBottom: "var(--space-2)" }}
+              />
             </Field>
             <Field label="Ваше ім'я">
-              <Input name="name" required autoComplete="name" />
+              <Input
+                name="name"
+                required
+                autoComplete="name"
+                style={{ paddingTop: "var(--space-2)", paddingBottom: "var(--space-2)" }}
+              />
             </Field>
             <Field label="Email для рахунка">
               <Input
@@ -90,6 +100,7 @@ export function RequestForm() {
                 required
                 autoComplete="email"
                 inputMode="email"
+                style={{ paddingTop: "var(--space-2)", paddingBottom: "var(--space-2)" }}
               />
             </Field>
             <Field
@@ -99,7 +110,8 @@ export function RequestForm() {
               <select
                 name="seats"
                 defaultValue="25"
-                className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--text-body)] text-[var(--color-text)] outline-none focus:border-[var(--color-border-strong)]"
+                className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-[var(--space-4)] text-[length:var(--text-body)] text-[var(--color-text)] outline-none focus:border-[var(--color-border-strong)]"
+                style={{ paddingTop: "var(--space-2)", paddingBottom: "var(--space-2)" }}
               >
                 {SEAT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -112,7 +124,8 @@ export function RequestForm() {
               <textarea
                 name="note"
                 rows={3}
-                className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-[var(--space-4)] py-[var(--space-3)] text-[length:var(--text-body)] text-[var(--color-text)] outline-none focus:border-[var(--color-border-strong)]"
+                className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-[var(--space-4)] text-[length:var(--text-body)] text-[var(--color-text)] outline-none focus:border-[var(--color-border-strong)]"
+                style={{ paddingTop: "var(--space-2)", paddingBottom: "var(--space-2)" }}
               />
             </Field>
 
@@ -121,21 +134,13 @@ export function RequestForm() {
             </Button>
           </form>
 
-          <p
-            aria-live="polite"
-            className="mt-[var(--space-4)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
-          >
-            {sent
-              ? "Лист сформовано в поштовому клієнті. Перевірте дані та надішліть."
-              : "Якщо поштовий клієнт не відкрився, надішліть лист на адресу:"}
-          </p>
-          {!sent && (
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="tap inline-flex items-center text-[length:var(--text-sm)] text-[var(--color-text)] underline"
+          {sent && (
+            <p
+              aria-live="polite"
+              className="mt-[var(--space-4)] text-[length:var(--text-sm)] text-[var(--color-text-secondary)]"
             >
-              {CONTACT_EMAIL}
-            </a>
+              Лист сформовано в поштовому клієнті. Перевірте дані та надішліть.
+            </p>
           )}
         </div>
       </div>

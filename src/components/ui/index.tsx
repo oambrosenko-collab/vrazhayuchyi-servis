@@ -122,6 +122,8 @@ export function Card({
       className={cn(
         "rounded-[var(--radius-lg)] border border-[var(--color-border)]",
         "bg-[var(--color-surface)] p-[var(--space-6)]",
+        "transition-[transform,box-shadow] duration-200 ease-out",
+        "hover:-translate-y-1 hover:shadow-[var(--shadow-md)]",
         className,
       )}
     />

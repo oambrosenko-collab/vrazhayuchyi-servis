@@ -59,6 +59,7 @@ export function Pricing() {
             key={p.name}
             className={
               "flex flex-col rounded-[var(--radius-lg)] border bg-[var(--color-surface)] p-[var(--space-6)] " +
+              "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-[var(--shadow-md)] " +
               (p.featured
                 ? "border-[var(--color-accent)]"
                 : "border-[var(--color-border)]")
@@ -102,7 +103,7 @@ export function Pricing() {
         ))}
       </div>
 
-      <div className="mt-[var(--space-6)] grid gap-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-[var(--space-6)] md:grid-cols-3">
+      <div className="mt-[50px] grid gap-[var(--space-6)] rounded-[var(--radius-lg)] border border-[var(--color-border)] p-[var(--space-6)] md:grid-cols-3">
         <div>
           <h3
             className="flex items-center gap-[var(--space-2)] font-[var(--weight-semibold)]"

@@ -18,7 +18,7 @@ const LINKS = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-[var(--z-sticky)] border-b border-[var(--color-border)] bg-[var(--color-bg-deep)]/95 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-[72rem] items-center justify-between gap-[var(--space-4)] px-[var(--space-4)] py-[var(--space-2)]">
+      <div className="mx-auto flex w-full max-w-[96rem] items-center justify-between gap-[var(--space-4)] px-[var(--space-4)] py-[var(--space-2)]">
         <Link
           href="/"
           className="tap flex items-center font-[var(--weight-bold)] [font-family:var(--font-display)]"

@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 
 /**
@@ -96,6 +98,32 @@ const ITEMS = [
 ];
 
 export function Highlights() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = React.useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || revealed) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setRevealed(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+    // Same reasoning as `Section`: `revealed` is only read to skip setup
+    // when prefers-reduced-motion already resolved it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     /* Straddling the seam, not sitting below it.
      *
@@ -111,10 +139,26 @@ export function Highlights() {
      *
      * Below `lg` the panel stacks four rows tall and half of it would
      * bury the next heading, so there it keeps a modest overlap and stays
-     * in flow. */
+     * in flow.
+     *
+     * The entrance animation lives on this innermost grid, not on either
+     * wrapper above: those two carry the static `-translate-y-1/2` seam
+     * positioning, and animating that same property here would fight it.
+     * A transform on this box composes independently of its ancestors', so
+     * it can slide up from below on its own without touching the seam
+     * math. */
     <div className="relative z-10 -mt-[var(--space-12)] px-[var(--space-4)] md:-mt-[var(--space-16)] lg:mt-0 lg:h-0">
-      <div className="mx-auto w-full max-w-[72rem] lg:-translate-y-1/2">
-        <div className="grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-border)] sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto w-full max-w-[96rem] lg:-translate-y-1/2">
+        <div
+          ref={ref}
+          className={
+            "grid gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-border)] sm:grid-cols-2 lg:grid-cols-4 " +
+            "transition-all duration-700 ease-out " +
+            (revealed
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-[2.5rem]")
+          }
+        >
           {ITEMS.map((item) => (
             <div
               key={item.title}
