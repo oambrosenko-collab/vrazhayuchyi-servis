@@ -20,19 +20,19 @@ const AREAS: { key: NavArea; href: string; label: string; roles: Role[] }[] = [
     key: "learn",
     href: "/learn",
     label: "Навчання",
-    roles: ["employee", "org_admin", "superadmin"],
+    roles: ["employee", "org_admin", "superadmin", "viewer"],
   },
   {
     key: "admin",
     href: "/admin",
     label: "Кабінет",
-    roles: ["org_admin", "superadmin"],
+    roles: ["org_admin", "superadmin", "viewer"],
   },
   {
     key: "su",
     href: "/su",
     label: "Платформа",
-    roles: ["superadmin"],
+    roles: ["superadmin", "viewer"],
   },
 ];
 

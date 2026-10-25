@@ -276,6 +276,21 @@ export type Database = {
           },
         ];
       };
+      view_invites: {
+        Row: {
+          created_at: string;
+          token: string;
+        };
+        Insert: {
+          created_at?: string;
+          token?: string;
+        };
+        Update: {
+          created_at?: string;
+          token?: string;
+        };
+        Relationships: [];
+      };
       webinars: {
         Row: {
           created_at: string;
@@ -556,6 +571,18 @@ export type Database = {
           out_valid: boolean;
         }[];
       };
+      claim_view_access: {
+        Args: { p_full_name: string; p_token: string };
+        Returns: {
+          out_ok: boolean;
+          out_reason: string;
+          out_role: Database["public"]["Enums"]["user_role"];
+        }[];
+      };
+      lookup_view_invite: {
+        Args: { p_token: string };
+        Returns: { out_valid: boolean }[];
+      };
       org_overview: {
         Args: never;
         Returns: {
@@ -735,7 +762,7 @@ export type Database = {
     };
     Enums: {
       org_status: "trial" | "active" | "expired" | "suspended";
-      user_role: "employee" | "org_admin" | "superadmin";
+      user_role: "employee" | "org_admin" | "superadmin" | "viewer";
       user_status: "active" | "removed";
       webinar_touch: "live" | "recording";
     };

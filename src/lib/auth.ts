@@ -50,18 +50,22 @@ export async function requireActiveUser(): Promise<AppUser> {
   return row;
 }
 
-/** The platform owner. Nobody else gets past this. */
+/** The platform owner — or a read-only viewer let in by the demo link. */
 export async function requireSuperadmin(): Promise<AppUser> {
   const user = await requireActiveUser();
-  // Not a 403 page: someone who is not the owner has no business
-  // learning that /su exists.
-  if (user.role !== "superadmin") notFound();
+  // Not a 403 page: someone with no business here has no business
+  // learning that /su exists either.
+  if (user.role !== "superadmin" && user.role !== "viewer") notFound();
   return user;
 }
 
 export async function requireOrgAdmin(): Promise<AppUser> {
   const user = await requireActiveUser();
-  if (user.role !== "org_admin" && user.role !== "superadmin") {
+  if (
+    user.role !== "org_admin" &&
+    user.role !== "superadmin" &&
+    user.role !== "viewer"
+  ) {
     redirect("/learn");
   }
   return user;

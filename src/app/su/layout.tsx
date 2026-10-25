@@ -23,11 +23,11 @@ export default async function SuLayout({
   children,
 }: LayoutProps<"/su">) {
   await connection();
-  await requireSuperadmin();
+  const user = await requireSuperadmin();
 
   return (
     <div className="mx-auto w-full max-w-[72rem] px-[var(--space-4)] py-[var(--space-6)]">
-      <RoleNav role="superadmin" current="su" />
+      <RoleNav role={user.role} current="su" />
 
       <nav className="mb-[var(--space-6)] flex flex-wrap items-center gap-[var(--space-1)]">
           {TABS.map((t) => (
