@@ -103,42 +103,6 @@ export async function joinOrganization(
 }
 
 /* ------------------------------------------------------------------ */
-/* The demo viewer — read-only, every tab, no seat consumed            */
-/* ------------------------------------------------------------------ */
-
-export async function claimViewAccess(
-  _prev: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
-  const token = String(formData.get("token") ?? "");
-  const fullName = String(formData.get("full_name") ?? "").trim();
-
-  if (fullName.length < 2) return { error: REASONS.bad_name };
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("claim_view_access", {
-    p_token: token,
-    p_full_name: fullName,
-  });
-
-  if (error) return { error: message(null) };
-
-  const row = data?.[0];
-  if (!row?.out_ok) return { error: message(row?.out_reason) };
-
-  // A real account (employee/org_admin/superadmin) that happened to open
-  // this link keeps its own home; only a freshly claimed viewer lands on
-  // the platform's own front door.
-  const home: Record<string, string> = {
-    viewer: "/su",
-    superadmin: "/su",
-    org_admin: "/admin",
-    employee: "/learn",
-  };
-  redirect(home[row.out_role] ?? "/learn");
-}
-
-/* ------------------------------------------------------------------ */
 /* Admin of the restaurant                                             */
 /* ------------------------------------------------------------------ */
 
